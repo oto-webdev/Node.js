@@ -1,10 +1,10 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import connectDB from './config/connect.db.js'
-import bookRoutes from './routes/bookRoutes.js'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import connectDB from './config/connect.db.js'
+import bookRoutes from './routes/bookRoutes.js'
 
 dotenv.config()
 
