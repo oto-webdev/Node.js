@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import connectDB from './config/connect.db.js'
 import bookRoutes from './routes/bookRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 
 dotenv.config()
 
@@ -17,6 +18,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.use("/api/books", bookRoutes)
+app.use("/api/users", userRoutes)
 
 const startServer = async () => {
     await connectDB()
