@@ -5,3 +5,5 @@ cloudinary.config({
     cloud_key: process.env.CLOUDINARY_API_KEY,
     cloud_secret: process.env.CLOUDINARY_API_SECRET,
 })
+
+export default cloudinary;
