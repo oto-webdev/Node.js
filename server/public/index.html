@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+        #user-list, #chat {
+            margin: 20px;
+        }
+        #users {
+            list-style-type: none;
+            padding: 0;
+        }
+        #users li {
+            background-color: #e0e0e0;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        #message-form {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            width: 300px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="user-list">
+        <h1>Online Users</h1>
+        <ul id="users"></ul>
+    </div>
+
+    <div id="chat">
+        <div id="messages"></div>
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="Enter message" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messagesContainer = document.getElementById("messages");
+        const usersList = document.getElementById("users");
+        const messageForm = document.getElementById("message-form");
+        const messageInput = document.getElementById("message-input");
+
+        const username = prompt("Enter username");
+
+        socket.emit("join", username);
+
+        socket.on("userJoined", (user) => {
+            addMessage(`${user} has joined the chat`);
+        });
+
+        socket.on("userList", (users) => {
+            usersList.innerHTML = users.map((user) => `<li>${user}</li>`).join("");
+        });
+
+        socket.on("chatMessage", (msg) => {
+            addMessage(msg);
+        });
+
+        socket.on("userLeft", (user) => {
+            addMessage(`${user} has left the chat`);
+        });
+
+        messageForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const message = messageInput.value;
+            if (message.trim()) {
+                socket.emit("sendMessage", message);
+                messageInput.value = "";
+            }
+        });
+
+        function addMessage(message) {
+            const messageEl = document.createElement("div");
+            messageEl.classList.add("message");
+            messageEl.textContent = message;
+            messagesContainer.appendChild(messageEl);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight; 
+        }
+    </script>
+</body>
+</html>
