@@ -68,3 +68,30 @@ export const login = expressAsyncHandler(async (req, res) => {
         return res.status(500).json({message: error.message});
     }
 });
+
+export const changePassword = expressAsyncHandler(async (req, res) => {
+    try{
+        const userId = req.userInfo.userId;
+        
+        const {oldPassword, newPassword} = req.body;
+        const user = await User.findById(user)
+        if(!user){
+            return res.status(400).json({message: "Invalid user"})
+        }
+
+        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password)
+        if(!isPasswordMatch){
+            return res.status(400).json({message: "Old password is not correct! try again."})
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const newHashedPWD = await bcrypt.hash(newPassword, salt)
+
+        user.password = newHashedPWD
+        await user.save()
+        
+        return res.status(200).json({message: "Password changed"})
+    }catch(error){
+        return res.status(500).json({message: error.message})
+    }
+})
